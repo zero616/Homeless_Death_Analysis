@@ -17,8 +17,12 @@ bibliography: references.bib
 #| include: false
 #| warning: false
 #| message: false
-
-library(tidyverse)
+install.packages("opendatatoronto")
+library("janitor")
+library("knitr")
+library("lubridate")
+library("opendatatoronto")
+library("tidyverse")
 library(palmerpenguins)
 ```
 
@@ -34,6 +38,7 @@ The remainder of this paper is structured as follows. @sec-data....
 # Data {#sec-data}
 
 Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+
 
 ```{r}
 #| label: fig-bills
