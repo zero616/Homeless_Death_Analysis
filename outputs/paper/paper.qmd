@@ -3,10 +3,10 @@ title: "How Toronto's homeless death toll over the years shows the dangers of ad
 subtitle: "Data analysis of homeless deaths in Toronto from 2017 to 2023"
 author: 
   - Shipeng Zhang
-thanks: "Code and data are available at: LINK."
+thanks: "Code and data are available at: https://github.com/zero616/Homeless_Death_Analysis."
 date: 2024-01-22
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "Homelessness is a well-known problem in Toronto, and this article takes an in-depth look at the tragic reality of homelessness in Toronto. Focuses on the devastating impact of drug addiction by analyzing homeless death toll data from 2017 to 2023. Our top findings reveal a worrying rise in addiction-related homeless deaths over the years. By examining causes of death, age groups and gender, we provide a comprehensive overview revealing the dangers faced by this vulnerable group."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -28,13 +28,42 @@ library("tidyverse")
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections.
+Toronto is currently experiencing an escalating drug poisoning crisis,
+with challenges posed by the Covid-19 pandemic further exacerbating the
+public health dilemma. This article explores the details behind this
+crisis through a comprehensive analysis of homeless deaths from 2017 to
+2023.
 
-The remainder of this paper is structured as follows. @sec-data....
+Drug addiction has a profound impact on the homeless community. Our
+result reveal the rapid spread of drug poisoning in Toronto. This
+article takes an depth look at the proportion of deaths caused by drug
+poisoning and sheds light on the impact of the COVID-19 pandemic on the
+drug poisoning crisis.
+
+To examine the impact of the COVID-19 pandemic on the drug poisoning
+crisis, this article is divided into the following sections: data,
+results, discussion, and conclusion. In the data section, I discuss the
+nature of the spreadsheets obtained through the City of Toronto's
+OpenDataToronto (Toronto Public Health 2023) and the steps I took to
+clean and analyze the data. The Results section displays the trends
+discovered during the analysis, and the Discussion section evaluates the
+trends and provides insights. Finally, the conclusion summarizes the
+main findings of this paper.
 
 # Data {#sec-data}
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+The dataset used in this analysis was obtained from the City of
+Toronto's OpenDataToronto Library (Gelfand 2022), adhering to ethical
+guidelines and ensuring personal anonymity. It includes important
+information such as year of death, cause of death, age group, gender and
+number of people. To maintain transparency and reproducibility, all
+analyzes were performed using the R programming language and visualized
+with ggplot2 (Wickham 2016) and tables created with knit (Xie 2023).
+
+Table 1 provides a summary of the dataset outlining the key variables
+under consideration: time to death, cause of death, sex and age group.
+The time of death started in 2017 and ended in 2023, and the age groups
+were divided into \<20, 20-39, 40-59, 60+.
 
 ```{r}
 #| warning: false
@@ -43,23 +72,56 @@ Some of our data is of penguins (@fig-bills), from @palmerpenguins.
 
 file_path <- "../../inputs/data/raw_data.csv"
 toronto_homeless_death <- read.csv(file_path)
-toronto_homeless_death <- dplyr::select(toronto_homeless_death, -X_id)           
+toronto_homeless_death <- dplyr::select(toronto_homeless_death, -X_id)   
+# Remove rows where 'Gender' is 'Unknown'
+toronto_homeless_death <- toronto_homeless_death %>% filter(Gender != 'Unknown')
+toronto_homeless_death <- toronto_homeless_death %>% filter(Age_group != 'Unknown')
+# Remove rows where 'Cause_of_death' is 'Unknown' or 'Pending'
+toronto_homeless_death <- toronto_homeless_death %>%
+  filter(Cause_of_death != 'Unknown/Pending')
+
 sample_data <- head(toronto_homeless_death, 6)
 knitr::kable(sample_data,'markdown',col.names = c("Year of Death", "Cause of Death", "Age Group", "Gender", "Count"),align = 'c',
                       
-                      caption = "Sample Table for Causes of Death")
+                      caption = "Sample Table for Toronto Homeless Death")
   # Print the table
 
 ```
 
 ```{r}
-#| label: fig-causes-of-death
-#| fig-cap: Causes of death analysis
+total_count_age_data <- toronto_homeless_death %>%
+  group_by(Age_group, Cause_of_death) %>%
+  summarise(total_count_age = sum(Count), .groups = 'drop')
+sample_total_count_by_age_data <- head(total_count_age_data, 6)
+knitr::kable(sample_total_count_by_age_data,'markdown',col.names = c("Age Group", "Cause of Death", "Total Count"),align = 'c',
+                      
+                      caption = "Sample Table for total death number of causes of death by Age Group")
+```
+
+```{r}
+total_count_data <- toronto_homeless_death %>%
+  group_by(Year.of.death, Cause_of_death) %>%
+  summarise(total_count = sum(Count), .groups = 'drop')
+sample_total_count_by_year_data <- head(total_count_data, 6)
+knitr::kable(sample_total_count_by_year_data,'markdown',col.names = c("Year of Death", "Cause of Death", "Total Count"),align = 'c',
+                      
+                      caption = "Sample Table for total death number of causes of death by Age Group")
+```
+
+Figure 1 shows the distribution of causes of death among homeless
+people, stratified by age group. This figure provides an impactful
+sketch of the leading causes of death among homeless people.
+
+```{r}
+#| label: fig-causes-of-death-by-age
+#| fig-cap: Causes of death analysis by abe
+#| warning: false
+#| message: false
 #| echo: false
 
 
-ggplot(data = toronto_homeless_death,mapping =  aes(x = Cause_of_death, fill = Age_group)) +
-  geom_bar(position = "stack") +
+ggplot(data = total_count_age_data,mapping =  aes(x = Cause_of_death,y =total_count_age, fill = Age_group)) +
+  geom_bar(stat = "identity") +
   scale_fill_manual(values = c("lightblue", "lightgreen", "lightpink", "lightyellow", "lightgray")) +
   labs(title = "Causes of Death Stacked by Age Group",
        x = "Cause of Death",
@@ -68,27 +130,58 @@ ggplot(data = toronto_homeless_death,mapping =  aes(x = Cause_of_death, fill = A
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but
-don't worry about doing that until you have finished every other aspect
-of the paper - Quarto will try to make it look nice and the defaults
-usually work well once you have enough text.)
-
-#\| label: fig-planes #\| fig-cap: Relationship between wing length and
-width #\| echo: false #\| warning: false #\| message: false
-
-analysis_data \<- read_csv(here::here("outputs/data/analysis_data.csv"))
-
-analysis_data \|\> ggplot(aes(x = width, y = length)) + geom_point(alpha
-= 0.8) + theme_minimal() + labs(x = "Wing width (mm)", y = "Wing length
-(mm)")
-
 ```{r}
+#| label: fig-causes-of-death-by-year
+#| fig-cap: Causes of death analysis by year
+#| echo: false
+#| warning: false
+#| message: false
+library(ggplot2)
+library(dplyr)
 
+# Assuming toronto_homeless_death is your dataset
+
+# Aggregate the data to get the total count for each cause of death in each year
+
+
+# Create a stacked bar chart
+ggplot(data = total_count_data, aes(x = Year.of.death, y = total_count, fill = Cause_of_death)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("lightblue", "lightgreen", "lightpink", "lightyellow", "lightgray","black","orange","purple","yellow","red")) +
+  labs(title = "Total Count of Causes of Death Stacked by Year",
+       x = "Year of Death",
+       y = "Death Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 0))
 ```
 
-Talk way more about it.
+```{r}
+#| label: fig-rate-of-death
+#| fig-cap: Rate of death Caused by Drug Toxicity Over Time
+#| warning: false
+#| message: false
+#| echo: false
+# Filter data for Drug Toxicity
+drug_toxicity_data <- total_count_data %>%
+  filter(Cause_of_death == "Drug Toxicity")
+
+# Calculate the rate (percentage) of Drug Toxicity deaths for each year
+rate_data <- total_count_data %>%
+  group_by(Year.of.death) %>%
+  summarise(total_deaths = sum(total_count),
+            drug_toxicity_deaths = sum(total_count[Cause_of_death == "Drug Toxicity"]),
+            rate = (drug_toxicity_deaths / total_deaths) * 100)  # Multiply by 100 to convert to percentage
+
+# Create a line chart for the rate of Drug Toxicity deaths over time
+ggplot(data = rate_data, aes(x = Year.of.death, y = rate)) +
+  geom_line(color = "red",linewidth = 1.5) +
+  geom_text(aes(label = sprintf("%.2f%%", rate)), vjust = -0.5, hjust = 0.5, size = 3) +
+  labs(title = "Rate of Deaths Caused by Drug Toxicity Over Time",
+       x = "Year of Death",
+       y = "Rate (%)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 0))
+```
 
 # Model
 
