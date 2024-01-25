@@ -44,8 +44,8 @@ To examine the impact of the COVID-19 pandemic on the drug poisoning
 crisis, this article is divided into the following sections: data,
 results, discussion, and conclusion. In the data section, I discuss the
 nature of the spreadsheets obtained through the City of Toronto's
-OpenDataToronto (Toronto Public Health 2023) and the steps I took to
-clean and analyze the data. The Results section displays the trends
+OpenDataToronto (Toronto Public Health 2023) and the tables I obtained
+for analyzing the data. The Results section displays the trends
 discovered during the analysis, and the Discussion section evaluates the
 trends and provides insights. Finally, the conclusion summarizes the
 main findings of this paper.
@@ -83,12 +83,19 @@ toronto_homeless_death <- toronto_homeless_death %>%
 sample_data <- head(toronto_homeless_death, 6)
 knitr::kable(sample_data,'markdown',col.names = c("Year of Death", "Cause of Death", "Age Group", "Gender", "Count"),align = 'c',
                       
-                      caption = "Sample Table for Toronto Homeless Death")
+                      caption = "Sample Table of Toronto Homeless Death")
   # Print the table
 
 ```
 
+Table 2 provides the total number of deaths summarized by age group and
+cause of death in the dataset, outlining the key variables available for
+analysis: cause of death, age group and number of deaths.
+
 ```{r}
+#| warning: false
+#| message: false
+#| echo: false
 total_count_age_data <- toronto_homeless_death %>%
   group_by(Age_group, Cause_of_death) %>%
   summarise(total_count_age = sum(Count), .groups = 'drop')
@@ -98,7 +105,15 @@ knitr::kable(sample_total_count_by_age_data,'markdown',col.names = c("Age Group"
                       caption = "Sample Table for total death number of causes of death by Age Group")
 ```
 
+Table 3 provides the total number of deaths in the data set summarized
+by year of death and cause of death, outlining the key variables in the
+analysis of addiction harm to homeless people: cause of death, time of
+death, and number of deaths.
+
 ```{r}
+#| warning: false
+#| message: false
+#| echo: false
 total_count_data <- toronto_homeless_death %>%
   group_by(Year.of.death, Cause_of_death) %>%
   summarise(total_count = sum(Count), .groups = 'drop')
@@ -107,6 +122,8 @@ knitr::kable(sample_total_count_by_year_data,'markdown',col.names = c("Year of D
                       
                       caption = "Sample Table for total death number of causes of death by Age Group")
 ```
+
+# Results
 
 Figure 1 shows the distribution of causes of death among homeless
 people, stratified by age group. This figure provides an impactful
@@ -181,66 +198,6 @@ ggplot(data = rate_data, aes(x = Year.of.death, y = rate)) +
        y = "Rate (%)") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 0))
-```
-
-# Model
-
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to
-investigate... Background details and diagnostics are included in
-[Appendix -@sec-model-details].
-
-## Model set-up
-
-Define $y_i$ as the number of seconds that the plane remained aloft.
-Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both
-measured in millimeters.
-
-```{=tex}
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
-```
-We run the model in R [@citeR] using the `rstanarm` package of
-@rstanarm. We use the default priors from `rstanarm`.
-
-### Model justification
-
-We expect a positive relationship between the size of the wings and time
-spent aloft. In particular...
-
-We can use maths by including latex between dollar signs, for instance
-$\theta$.
-
-# Results
-
-Our results are summarized in @tbl-modelresults. #\| echo: false #\|
-eval: true #\| warning: false #\| message: false
-
-library(rstanarm)
-
-first_model \<- readRDS(file =
-here::here("outputs/models/first_model.rds"))
-
-```{r}
-
-```
-
-#\| echo: false #\| eval: true #\| label: tbl-modelresults #\| tbl-cap:
-"Explanatory models of flight time based on wing width and wing length"
-#\| warning: false
-
-modelsummary::modelsummary( list( "First model" = first_model ),
-statistic = "mad", fmt = 2 )
-
-```{r}
-
 ```
 
 # Discussion
