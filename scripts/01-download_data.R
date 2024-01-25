@@ -14,7 +14,7 @@ library("knitr")
 library("lubridate")
 library("opendatatoronto")
 library("tidyverse")
-library(dplyr)
+library("dplyr")
 # [...UPDATE THIS...]
 
 #### Download data ####
