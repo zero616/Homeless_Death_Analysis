@@ -4,7 +4,8 @@
 
 This project analyzes the tragic reality of homelessness in Toronto, focusing on the impact of drug addiction by examining homeless death toll data from 2017 to 2023. The findings reveal a concerning rise in addiction-related homeless deaths over the years.
 
-## S
+## File Structure
+```
 Homeless_Death_Analysis
 |   .gitignore
 |   .RData
@@ -46,6 +47,7 @@ Homeless_Death_Analysis
         02-data_cleaning.R
         03-test_data.R
         04-model.R
+```
 
 ## Data Source
 
