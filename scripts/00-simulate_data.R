@@ -1,27 +1,21 @@
 #### Preamble ####
-# Purpose: Simulates... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Simulates of Death of Homeless Data
+# Author:Shipeng Zhang
+# Date: 22 January 2024
+# Contact: shipeng.zhang@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
-
 
 #### Workspace setup ####
 library("tidyverse")
-# [...UPDATE THIS...]
 
 #### Simulate simulated_data ####
-# [...ADD CODE HERE...]
-#### Simulate ####
 set.seed(853)
 
 # Number of rows in the table
 num_rows <- 100
 
 # Create a vector of years from 2017 to 2023
-years <- rep(seq(2017, 2023), each = num_rows )
+years <- rep(seq(2017, 2023) )
 
 # Simulate simulated_data for the table
 simulated_data <- data.frame(
