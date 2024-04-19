@@ -6,7 +6,7 @@ author:
 thanks: "Code and data are available at: https://github.com/zero616/Homeless_Death_Analysis."
 date: 2024-01-22
 date-format: long
-abstract: "Homelessness is a well-known problem in Toronto, and this article takes an in-depth look at the tragic reality of homelessness in Toronto. Focuses on the devastating impact of drug addiction by analyzing homeless death toll data from 2017 to 2023. Our top findings reveal a worrying rise in addiction-related homeless deaths over the years. By examining causes of death, death year and ratio of drug caused death, we provide a comprehensive overview revealing the dangers faced by this vulnerable group."
+abstract: "In Canada, the size and volatility of housing wealth has led many to believe that changes in housing prices have a significant impact on aggregate consumption. This study examines regional differences in housing price changes across Canada and their relationship to household spending patterns. Using forecasting models, we aim to estimate consumption levels in different regions based on NHPI data. However, limitations include potential inaccuracies in the NHPI data, assumptions about the relationship between house prices and consumption, and the model's ability to capture the full complexity of regional dynamics. Further research is needed to validate the model's predictions and explore other factors that influence consumer behavior."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -24,288 +24,412 @@ library("knitr")
 library("lubridate")
 library("opendatatoronto")
 library("tidyverse")
+library(rstanarm)
 ```
 
 # Introduction
+In recent years, the Canadian real estate market has been the subject of extensive analysis and debate due to its significant impact on the economy and the well-being of its citizens. Canadian home prices have experienced significant volatility, raising concerns about affordability, financial stability and the broader impact on consumer consumption. Understanding the complex relationship between house prices and consumption is critical for policymakers, economists and stakeholders.
 
-Toronto is currently experiencing a growing drug toxicity crisis, with
-challenges posed by the Covid-19 pandemic further exacerbating the
-public health dilemma. This article explores the details behind the
-crisis through a comprehensive analysis of homeless deaths from 2017 to
-2023.
+Canada's real estate market has experienced significant growth over the past few decades. Urban centers such as Toronto, Vancouver, and Montreal have become hot spots for real estate investment, driving up real estate values and reshaping the socioeconomic landscape. Historically low interest rates, demographic changes and foreign investment have fueled demand, leading to unprecedented price increases in some areas.
 
-Drug addiction has a profound impact on the homeless community. Our
-results identify a rapid expansion of drug toxicity deaths in Toronto.
-This article takes an in-depth look at the proportion of deaths caused
-by drug toxicity and reveals the impact of the COVID-19 pandemic on the
-drug toxicity crisis.
+For many Canadians, housing is the most important component of household wealth. As property values rise, homeowners experience a wealth effect, feeling wealthier and more willing to spend money. This phenomenon has implications for consumption patterns, as increased housing wealth stimulates consumption on goods and services, thereby boosting economic growth. Conversely, falling house prices could lead to a contraction in consumer consumption, dampening economic activity.
 
-Our article is divided into different sections: data, results,
-discussion and conclusion. The Data section clarifies the nature of the
-data-set obtained through the City of Toronto's OpenDataToronto (Toronto
-Public Health 2023) and the tables that contributed to our analytic
-work. In the results section, we show the clear growing trends that
-emerged during the analysis. The Discussion section assesses these
-trends and provides some insights into the underlying factors that led
-to the crisis and its exacerbation by the pandemic. Finally, the
-conclusion provides a concise summary based on the main findings,
-outlining the seriousness of the crisis and the need for targeted
-interventions.
+Despite the wealth effect of rising home prices, affordability issues remain in the Canadian housing market. Soaring housing prices relative to income levels have made home ownership increasingly difficult for many Canadians, especially younger generations and immigrants. High housing costs not only strain household budgets but also limit discretionary consumption on other goods and services, potentially limiting overall consumption growth. At the same time, high rental costs force shop owners to raise rents, which in turn leads to rising prices.
 
-The purpose of this article is to summarize the key challenges facing
-homeless people in Toronto. Through detailed analysis of the data, we
-deepen our understanding of this crisis and help inform data-based
-policies and interventions.
+Policy responses to housing market dynamics play a key role in shaping consumer behavior and broader economic outcomes. Measures aimed at cooling overheated housing markets, such as macroprudential regulation and tax policy, can influence housing affordability and household consumption decisions. Likewise, initiatives to boost the supply of affordable housing and enhance rental market stability are likely to reduce pressure on household budgets and support consumption growth.
+
+Given the multifaceted nature of the relationship between house prices and consumption, this article aims to understand the dynamics in the Canadian context. By examining historical trends, empirical evidence, and the impact of emergencies, we seek to elucidate the interplay between housing market dynamics and consumer consumption and establish a rigorous link between the new home price index and the growth rate of Canadian consumer consumption. Analytical and comprehensive insights, this study strives to inform policymakers and stakeholders and contribute to a nuanced understanding of housing consumption relationships in Canada.
+
 
 # Data {#sec-data}
 
-The data set used in this analysis was obtained from the City of
-Toronto's OpenDataToronto Library (Gelfand 2022), adhering to ethical
-guidelines and ensuring personal anonymity. It includes important
-information such as year of death, cause of death, age group, gender and
-number of people. For privacy and ethical reasons, the data does not
-include names, detailed time of death, and place of death. The data
-comes from data released by official coroner's agencies and shelters,
-among others. To maintain transparency and reproducibility, all analyzes
-were performed using the R programming language and visualized with
-ggplot2 (Wickham 2016) and tables created with knit (Xie 2023).
+This paper was produced using the R statistical programming language (R Core Team 2022).
+here was used to reference file locations (Müller 2020). The data was examined and cleaned
+using the packages janitor (Firke 2021), dplyr (Wickham et al. 2023), and tidyverse (Wickham
+et al. 2019). Tables were made knitr (Xie 2023) and broom (0.7.11 2021), and formatted with
+kableExtra (Zhu 2021). ggplot2 (Wickham 2016) was used to plot and scale the graphs.
 
-@tbl-Death provides a summary of the data set outlining the key
-variables under consideration: time to death, cause of death, sex and
-age group. The time of death started in 2017 and ended in 2023, and the
-age groups were divided into \<20, 20-39, 40-59, 60+.
+## The Dataset
+This dataset amalgamates information sourced from two key datasets available on the Canadian government's open platform: the "New Housing Price Index, Monthly" and the "Detailed Household Final Consumption Expenditure, Canada, Quarterly."
 
+The New Housing Price Index (NHPI) is a monthly metric tracking variations in sales prices of newly constructed homes across time. It encompasses various housing categories, including detached houses, semi-detached houses, and townhouses. Additionally, the survey incorporates builders' assessments of the current market value of land, which are then independently indexed to create land value series. Similarly, the structural value of the properties is indexed and presented as a house series. Overall, the NHPI serves as a useful tool for gauging fluctuations within the Canadian real estate sector.
+
+On the other hand, the Detailed Household Final Consumption Expenditure dataset provides a comprehensive summary of numerous expenditures incurred by Canadian residents for various purposes. It employs 2017 constant prices as a benchmark to eliminate the influence of inflation on growth rates.
+
+Upon aggregating and refining the data to exclude irrelevant information, certain trends emerged. 
+REF_DATE field denotes the specific quarter to which the data pertains, ensuring precision in analysis. 
+Consumption figures represent the total consumption by Canadian residents during the quarter.km     
+NHPI encapsulates Canada's national New Housing Price Index for the same period.
+
+## Data Cleaning
 ```{r}
-#| label: tbl-Death
-#| tbl-cap: Toronto Homeless Death (2017-2023)
+#| label: tbl-Sample-cost-raw
+#| tbl-cap: Sample Table of Canada Consumtion change data (2000-2009)
 #| warning: false
 #| message: false
 #| echo: false
 #read file
-file_path <- "../../outputs/data/cleaned_data.csv"
-toronto_homeless_death <- read.csv(file_path)
-sample_data <- head(toronto_homeless_death, 6)
+cost_file_path <- "../../outputs/data/cleaned_data_cost.csv"
+
+cost_raw_data <- read.csv(cost_file_path)
+
+
+sample_data_1 <- head(cost_raw_data, 6)
+
 # Print the table
-knitr::kable(sample_data,'markdown',col.names = c("Year of Death", "Cause of Death", "Age Group", "Gender", "Count"),align = 'c',
-                      
-                      caption = "Sample Table of Toronto Homeless Death (2017-2023)")
+knitr::kable(sample_data_1,'markdown',align = 'c')
 
 
 ```
 
-@tbl-Death-by-age provides the total number of deaths summarized by age
+```{r}
+#| label: tbl-Sample-NHPI-raw
+#| tbl-cap: Sample Table of Canada Consumtion and NHPI change (2000-2009)
+#| warning: false
+#| message: false
+#| echo: false
+#read file
+NHPI_file_path <- "../../outputs/data/cleaned_data_NHPI.csv"
+NHPI_raw_data <- read.csv(NHPI_file_path)
+sample_data_2 <- head(NHPI_raw_data, 6)
+# Print the table
+knitr::kable(sample_data_2,'markdown',align = 'c')
+```
+
+```{r}
+#| label: tbl-Sample
+#| tbl-cap: Sample Table of Canada Consumtion and NHPI change (2000-2009)
+#| warning: false
+#| message: false
+#| echo: false
+#read file
+file_path <- "../../outputs/data/analysis_data.csv"
+analysis_data <- read.csv(file_path)
+sample_data <- head(analysis_data, 6)
+# Print the table
+knitr::kable(sample_data,'markdown',col.names = c("Ref-Date", "Consumption (Million)", "Increasing Rate of Consumption", "NHPI", "Increasing Rate of Consumption"),align = 'c')
+
+
+```
+
+@tbl-Sample provides the total number of deaths summarized by age
 group and cause of death in the data set, outlining the key variables
 available for analysis: cause of death, age group and number of deaths.
 
 ```{r}
-#| label: tbl-Death-by-age
-#| tbl-cap: Toronto Homeless Death(by age) (2017-2023)
+#| label: tbl-Consumption-increasing
+#| tbl-cap: Sample Table for consumption data (2000-2009)
 #| warning: false
 #| message: false
 #| echo: false
-# group by age
-total_count_age_data <- toronto_homeless_death %>%
-  group_by(Age_group, Cause_of_death) %>%
-  summarise(total_count_age = sum(Count), .groups = 'drop')
-sample_total_count_by_age_data <- head(total_count_age_data, 6)
-knitr::kable(sample_total_count_by_age_data,'markdown',col.names = c("Age Group", "Cause of Death", "Total Count"),align = 'c',
-                      
-                      caption = "Sample Table for total death number of causes of death by Age Group (2017-2023)")
+
+consumption_data <- analysis_data %>%
+  select(-c(NHPI,Increasing_Rate_NHPI))
+sample_consumption_data <- head(consumption_data, 6)
+knitr::kable(sample_consumption_data,'markdown',col.names = c("Ref-Date", "Consumption (Million)", "Increasing Rate of Consumption"),align = 'c')
 ```
 
-@tbl-Death-by-year provides the total number of deaths in the data set
+@tbl-Consumption-increasing provides the total number of deaths in the data set
 summarized by year of death and cause of death, outlining the key
 variables in the analysis of addiction harm to homeless people: cause of
 death, time of death, and number of deaths.
 
 ```{r}
-#| label: tbl-Death-by-year
-#| tbl-cap: Toronto Homeless Death(by year) (2017-2023)
+
+```
+# Model
+Null hypothesis: the relationship between the quarterly national NHPI growth rate and the growth rate of Canada's total final consumption is not linear
+Alternative hypothesis: the relationship between the quarterly national NHPI growth rate and the growth rate of Canada's total final consumption is linear
+Linear regression analysis was performed to test the hypothesis and determine whether there was a statistically significant relationship between the variables. A low p-value(typically less than a chosen significance level, often 0.05) for the linear regression coefficient will provide evidence against the null hypothesis, indicating
+Changes in the NHPI growth rate do lead to meaningful increases in consumption by Canadian residents as a whole. On the other hand, if the p-value is high, it indicates that there is not enough evidence to reject the null hypothesis, and there may not be a significant linear relationship between the variables. Ultimately, the results of the analysis will inform whether the null hypothesis can or cannot be rejected.
+
+## Model set-up
+The polynomial regression model is defined as follows:
+```{=tex}
+\[ 
+Y = \beta_0 + \beta_1X + \varepsilon 
+\]
+
+Where:
+\begin{itemize}
+  \item \( Y \) is the dependent variable (Increasing Rate of Consumption).
+  \item \( X \) is the independent variable (Increasing Rate of NHPI).
+  \item \( \beta_0 \) and \( \beta_1 \) are the coefficients of the polynomial terms.
+  \item \( \varepsilon \) is the error term.
+\end{itemize}
+```
+
+```{r}
+#| label: tbl-model-summary
+#| tbl-cap: Linear Regression Model Summary
 #| warning: false
 #| message: false
 #| echo: false
-
-#group by year
-total_count_data <- toronto_homeless_death %>%
-  group_by(Year.of.death, Cause_of_death) %>%
-  summarise(total_count = sum(Count), .groups = 'drop')
-sample_total_count_by_year_data <- head(total_count_data, 6)
-knitr::kable(sample_total_count_by_year_data,'markdown',col.names = c("Year of Death", "Cause of Death", "Total Count"),align = 'c',
-                      
-                      caption = "Sample Table for total death number of causes of death by Year (2017-2023)")
+  analysis_data <- read_csv("../../outputs/data/analysis_data.csv")
+  linear_model <- lm(Increasing_Rate_Cost ~ Increasing_Rate_NHPI, data = analysis_data)
+  # Summary of the model
+  sample_model_summary<-summary(linear_model)$coefficients
+  knitr::kable(sample_model_summary,'markdown',align = 'c')
 ```
+
+@tbl-model-summary shows p-value is 0.0000001, then the linear model cannot be rejected.
+
+## Model Justification
+First observing the scatter plot of the data set, I believe that the relationship between the quarterly national NHPI growth rate and the growth rate of Canada's total final consumption is linear, then the linear regression model is appropriate.
+Compared to Bayesian models, linear models are simpler and easier to interpret. It assumes a straight-line relationship between variables, which makes it easier to understand and communicate the results. In a linear model, the coefficient represents the change in the dependent variable when the predictor variable changes by one unit. This directly explains the impact of the NHPI growth rate on the growth rate of total final consumption in Canada. Linear regression is widely used and implemented in statistical software, making it easy to apply and interpret results. If the relationship between the NHPI growth rate and Canada's total final consumption growth rate is approximately linear, then a linear model can provide an adequate fit to the data. Analytical plots of predicted and actual values can help verify whether the linear model adequately captures the relationship.
+
+## Model Prediction
+```{r}
+#| label: fig-model-prediction
+#| fig-cap: Linear Regression Model Prediction
+#| warning: false
+#| message: false
+#| echo: false
+linear_model <- readRDS("../../models/model.rds")
+# Get predicted values from the linear model
+linear_model <- lm(Increasing_Rate_Cost ~ Increasing_Rate_NHPI, data = analysis_data)
+  predicted_values <- predict(linear_model)
+  analysis_data <- read_csv("../../outputs/data/analysis_data.csv")
+  # Create a scatter plot of observed vs. predicted values
+  ggplot(analysis_data, aes(x = Increasing_Rate_Cost, y = predicted_values)) +
+    geom_point() +
+    geom_abline(intercept = 0, slope = 1, color = "red", linetype = "dashed") +  # Add diagonal line for reference
+    labs(x = "Observed Consumption", y = "Predicted Consumption", title = "Observed vs. Predicted Consumption")
+```
+@fig-model-prediction shows the scatter plot compares the observed values of Consumption from the data set with the predicted values from the linear regression model. The dashed red line represents the line of perfect prediction (where observed equals predicted values). This plot allows us to visually assess how well the linear regression model fits the data. The points cluster closely around the dashed red line, indicating a strong fit between observed and predicted values. 
+
+\newpage
 
 # Results
-
-@fig-causes-of-death-by-age shows the distribution of causes of death
-among homeless people, stratified by age group. This figure provides an
-impact sketch of the leading causes of death among homeless people.
-
 ```{r}
-#| label: fig-causes-of-death-by-age
-#| fig-cap: Causes of death analysis by abe
+#| label: fig-model-plot
+#| fig-cap: Scatter plot of Consumption vs. NHPI
 #| warning: false
 #| message: false
 #| echo: false
-
-#print figure
-ggplot(data = total_count_age_data,mapping =  aes(x = Cause_of_death,y =total_count_age, fill = Age_group)) +
-  geom_bar(stat = "identity") +
-  scale_fill_manual(values = c("lightblue", "lightgreen", "lightpink", "lightyellow", "lightgray")) +
-  labs(title = "Causes of Death Stacked by Age Group (2017-2023)",
-       x = "Cause of Death",
-       y = "Count") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ ggplot(analysis_data, aes(x = Increasing_Rate_NHPI, y = Increasing_Rate_Cost)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE, color = "blue") +  # Add fitted line
+    labs(x = "NHPI(Increasing Rate base 2000/1/1)", y = "Consumption(Increasing Rate base 2000/1/1)", title = "Scatter plot of Consumption vs. NHPI")
 ```
 
-@fig-causes-of-death-by-year shows the number of homeless deaths
-(stratified by cause of death) starting in 2017 and ending in 2023. This
-graphic provides a visual representation of how the homeless drug
-intoxicating crisis is developing. From Figure 2 we can see that
-starting in 2020, the number of deaths began to increase rapidly and
-peaked in 2021.
+This research used a linear regression model to investigate the association between xxxxxxxx. As shown in Table 2, the estimated intercept produced by the model is 2.4367510, indicating that the expected value of the underlying consumption growth rate when the NHPI growth rate is zero is 2.4367510. The model also shows a statistically significant regression coefficient of 0.6191314, indicating that there is a significant linear relationship between the NHPI growth rate and the consumption growth rate. These findings indicate that as the NHPI growth rate increases, it is predicted that the consumption growth rate for the quarter will increase by approximately 0.6191314 percentage points, retaining all other variables. This shows that as the NHPI continues to grow, the final consumption of Canadian residents also continues to increase.
+@fig-model-plot illustrates the relationship between NHPI growth rate and consumption growth rate, where the number of data points with NHPI growth rate on the x-axis and consumption growth rate on the y-axis of the scatterplot shows a clear upward slope. The fitted regression line represents the overall trend of the data, where the slope indicates that the consumption growth rate increases as the NHPI growth rate increases.
 
-```{r}
-#| label: fig-causes-of-death-by-year
-#| fig-cap: Causes of death analysis by year
-#| echo: false
-#| warning: false
-#| message: false
-library(ggplot2)
-library(dplyr)
-
-# Create a stacked bar chart
-ggplot(data = total_count_data, aes(x = Year.of.death, y = total_count, fill = Cause_of_death)) +
-  geom_bar(stat = "identity") +
-  scale_fill_manual(values = c( "#cc340c","#e8490f","#f18800","#e4ce00",
-            "#9ec417","#13a983","lightgreen", "lightblue","#44c1f0","#3f60aa")) +
-  labs(title = "Total Count of Causes of Death Stacked by Year (2017-2023)",
-       x = "Year of Death",
-       y = "Death Count") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 0))
-```
-
-Even though we can clearly see the huge proportion of deaths caused by
-drug toxicity and the worsening status quo from Figure 2, in order to
-understand the worsening of the crisis more intuitively from the data, I
-calculated and summarized the number of drug toxicity cause death as a
-proportion of the total deaths The ratio of the number of people has
-been compiled into the able and the figure, as well as @tbl-Death-ratio
-and Figure 3.
-
-```{r}
-#| label: tbl-Death-ratio
-#| tbl-cap:  ratio of Deaths Caused by Drug Toxicity (2017-2023)
-#| warning: false
-#| message: false
-#| echo: false
-# Calculate the ratio (percentage) of Drug Toxicity deaths for each year
-ratio_data <- total_count_data %>%
-  group_by(Year.of.death) %>%
-  summarise(total_deaths = sum(total_count),
-            drug_toxicity_deaths = sum(total_count[Cause_of_death == "Drug Toxicity"]),
-            ratio = (round((drug_toxicity_deaths / total_deaths) * 100,digits=2)))  # Multiply by 100 to convert to percentage and round to .00
-knitr::kable(ratio_data,'markdown',col.names = c("Year of Death", "Total Death", "Drug Toxicity Death", "Ratio"),align = 'c',
-                      
-                      caption = "Sample Table for Ratio of Deaths Caused by Drug Toxicity Over Time (2017-2023)")
-```
-
-```{r}
-#| label: fig-ratio-of-death
-#| fig-cap: ratio of death Caused by Drug Toxicity Over Time
-#| warning: false
-#| message: false
-#| echo: false
-# Create a line chart for the ratio of Drug Toxicity deaths over time
-ggplot(data = ratio_data, aes(x = Year.of.death, y = ratio)) +
-  geom_line(color = "#f46f20",linewidth = 1.5) +
-  geom_text(aes(label = sprintf("%.2f%%", ratio)), vjust = -0.5, hjust = 0.5, size = 3) +
-  labs(title = "Ratio of Deaths Caused by Drug Toxicity Over Time (2017-2023)",
-       x = "Year of Death",
-       y = "Ratio (%)") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 0))
-```
 
 \newpage
 
 # Discussion
+```{r}
+#| label: fig-consumption-plot
+#| fig-cap: Consumption Over Time
+#| warning: false
+#| message: false
+#| echo: false
 
-## Cause of death: {#sec-first-point}
+fig_data<-analysis_data
+fig_data$REF_DATE <- as.Date(paste(fig_data$REF_DATE, "-01", sep = ""), format = "%Y-%m-%d")
+    ggplot(fig_data, aes(x = REF_DATE, y = Consumption)) +
+    geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+    coord_cartesian(ylim = c(180000, max(fig_data$Consumption))) +
+    labs(x = "Date", y = "Consumption")
+```
 
-Our analysis takes a closer look at the causes of death among homeless
-people, focusing specifically on deaths related to drug addiction. Using
-data visualization, the paper identifies drug toxicity as the leading
-cause of death among homeless people. @fig-causes-of-death-by-age
-provides a breakdown of causes of death, highlighting the proportion
-attributable to addiction-related problems. These deaths are an example
-of the negative health impacts of the ongoing drug toxicity crisis. This
-section discusses the implications of these findings for public health
-initiatives and recommendations for addressing addiction within the
-homeless community. Over the past several years, Toronto Public Health,
-the City of Toronto and community partners have used ongoing funding for
-harm reduction services and supports and affordable housing. These
-policies can really help help homeless people with drug addictions and
-other homeless people get safer housing and adequate medical support.
-From a medical safety perspective, these policies may even help homeless
-drug addicts gain access to safer and more stable places to use drugs.
-These policies help reduce the number of deaths among drug addicts.
+```{r}
+#| label: fig-NHPI-plot
+#| fig-cap: NHPI Over Time
+#| warning: false
+#| message: false
+#| echo: false
 
-## The rising number of homeless deaths caused by drugs:
+fig_data<-analysis_data
+fig_data$REF_DATE <- as.Date(paste(fig_data$REF_DATE, "-01", sep = ""), format = "%Y-%m-%d")
+    ggplot(fig_data, aes(x = REF_DATE, y = NHPI)) +
+    geom_bar(stat = "identity", fill = "skyblue", color = "black") +
+    coord_cartesian(ylim = c(55, max(fig_data$NHPI))) +
+    labs(x = "Date", y = "NHPI")
+```
 
-The data analysis also revealed a disturbing trend of rising ratios of
-drug toxicity deaths among homeless people in Toronto. This section
-discusses the reasons for this upward trajectory, emphasizing the
-urgency for targeted interventions. By studying the annual distribution
-of deaths, we reveal patterns and potential influencing factors that may
-inform policy changes and resource allocation. @fig-ratio-of-death shows,
-drug Toxicity has become the main cause of death among homeless people
-since 2017. Before the COVID-19 pandemic, the death ratio among homeless
-people due to drug toxicity remained at around 40%. And after the
-pandemic began in 2020, the ratio of homeless deaths caused by drug
-toxicity quickly increased to 65%, a 26% increase in one year. And it
-maintained this ratio in the following years, and jumped again to 73% in
-2023, an increase of 10%. The ratio of drug toxicity deaths among
-homeless people in Toronto continues to rise since 2020. This was also
-the time of year when the Covid 19 pandemic began. Dr. Stephen Hwang, a
-physician and researcher at the MAP Center for Urban Health Solutions at
-Allied Health in Toronto, said the disruption caused by lock-downs and a
-lack of services has led people to change where they spend their time,
-and therefore where they use drugs (CityNews Toronto, 2023). Due to the
-impact of the pandemic, Toronto Public Health and the City of Toronto
-have had to significantly increase their funding expenditures in
-response to the pandemic, thereby reducing some support services for the
-homeless population. The impact of lock-downs and work suspensions has
-also led to a crisis in the lives and health of homeless people.
+## House Prices and Consumer consumption Trends
 
-# Result
+After analyzes historical trends in the New House Price Index (NHPI) and fluctuations in household consumer consumption. There is a significant correlation between the two.
+The first point to focus on is the wealth effect, where homeowners typically experience an increase in wealth when house prices rise. Increased wealth can boost consumer confidence and discretionary consumption as homeowners feel more financially secure. Conversely, falling home prices may lead to less consumer consumption as homeowners feel less wealthy.
+Second, fluctuations in the housing market, such as changes in housing affordability, mortgage rates, and housing supply and demand dynamics, may affect the NHPI and consumer consumption. For example, low mortgage rates may stimulate demand for housing, causing home prices to rise and increasing consumer consumption on related goods and services (e.g., home furnishings, renovations).
+Consumer Sentiment: Consumer sentiment and perceptions of future economic prospects can influence consumption decisions. Positive sentiment may lead to increased consumer consumption, including housing-related expenditures, while negative sentiment may have the opposite effect. For older homeowners, rising house prices will stimulate an increase in consumer consumption. For young renters, rising house prices will lead to an increase in rents, and high rents will lead to a decrease in consumer consumption.
 
-Our analysis presents a portrayal of the escalating impact of
-drug-related deaths within Toronto's homeless population. The confluence
-of drug addiction and the COVID-19 pandemic has resulted in a profound
-surge. Effectively addressing this challenge demands not only sustained
-funding for harm reduction services but also responses tailored to the
-challenges posed by the pandemic. A comprehensive understanding of the
-dynamics of causes and patterns of death becomes paramount as we
-confront these complex issues. This knowledge is instrumental in shaping
-policies that can genuinely save lives within the vulnerable homeless
-communities. The findings underscore the critical importance of drug
-safety outreach specifically tailored to homeless drug users. It becomes
-imperative to extend harm reduction and treatment options directly to
-those on the streets or within the community, rather than relying solely
-on clinic or hospital-based approaches. Waiting for individuals to seek
-help within traditional healthcare settings may prove inadequate in
-addressing the urgent needs of this vulnerable population. Proactive and
-accessible interventions are essential to mitigating the devastating
-impact of drug-related deaths among the homeless. This shift towards
-community-based outreach aligns with the recognition that meeting
-individuals where they are can significantly enhance the effectiveness
-of harm reduction and treatment initiatives.
+## Regional Differences
 
+```{r}
+#| label: fig-NHPI-toronto-plot
+#| fig-cap: NHPI of Toronto Over Time
+#| warning: false
+#| message: false
+#| echo: false
+
+raw_data_NHPI_file_path <- "../../inputs/data/raw_data_NHPI.csv"
+
+raw_data_NHPI <- read.csv(raw_data_NHPI_file_path)
+
+cleaned_data_NHPI_Ontario <- raw_data_NHPI %>%
+  filter(REF_DATE >="1999-12-01" & REF_DATE <="2009-10-01")
+cleaned_data_NHPI_Ontario <- cleaned_data_NHPI_Ontario %>%
+  filter(GEO == "Toronto, Ontario")
+cleaned_data_NHPI_Ontario <- cleaned_data_NHPI_Ontario %>%
+  filter(New.housing.price.indexes == "Total (house and land)")
+cleaned_data_NHPI_Ontario <- cleaned_data_NHPI_Ontario %>%
+  mutate(Increasing_Rate_NHPI = round(((VALUE / 57.2 - 1) * 100),2))
+cleaned_data_NHPI_Ontario <- cleaned_data_NHPI_Ontario %>%
+  select(-c(GEO,New.housing.price.indexes))
+fig_data<-cleaned_data_NHPI_Ontario
+fig_data$REF_DATE <- as.Date(paste(fig_data$REF_DATE, "-01", sep = ""), format = "%Y-%m-%d")
+ # Create the line plot
+ggplot(fig_data, aes(x = REF_DATE, y = VALUE)) +
+  geom_line() +
+  labs(x = "Date", y = "NHPI")
+```
+```{r}
+#| label: fig-NHPI-Vancouver-plot
+#| fig-cap: NHPI of Vancouver Over Time
+#| warning: false
+#| message: false
+#| echo: false
+
+raw_data_NHPI_file_path <- "../../inputs/data/raw_data_NHPI.csv"
+
+raw_data_NHPI <- read.csv(raw_data_NHPI_file_path)
+
+cleaned_data_NHPI_Vancouver <- raw_data_NHPI %>%
+  filter(REF_DATE >="1999-12-01" & REF_DATE <="2009-10-01")
+cleaned_data_NHPI_Vancouver <- cleaned_data_NHPI_Vancouver %>%
+  filter(GEO == "Vancouver, British Columbia")
+cleaned_data_NHPI_Vancouver <- cleaned_data_NHPI_Vancouver %>%
+  filter(New.housing.price.indexes == "Total (house and land)")
+cleaned_data_NHPI_Vancouver <- cleaned_data_NHPI_Vancouver %>%
+  mutate(Increasing_Rate_NHPI = round(((VALUE / 57.2 - 1) * 100),2))
+cleaned_data_NHPI_Vancouver <- cleaned_data_NHPI_Vancouver %>%
+  select(-c(GEO,New.housing.price.indexes))
+fig_data<-cleaned_data_NHPI_Vancouver
+fig_data$REF_DATE <- as.Date(paste(fig_data$REF_DATE, "-01", sep = ""), format = "%Y-%m-%d")
+# Create the line plot
+ggplot(fig_data, aes(x = REF_DATE, y = VALUE)) +
+  geom_line() +
+  labs(x = "Date", y = "NHPI")
+```
+
+```{r}
+#| label: fig-NHPI-Regina-plot
+#| fig-cap: NHPI of Regina Over Time
+#| warning: false
+#| message: false
+#| echo: false
+
+raw_data_NHPI_file_path <- "../../inputs/data/raw_data_NHPI.csv"
+
+raw_data_NHPI <- read.csv(raw_data_NHPI_file_path)
+
+cleaned_data_NHPI_Regina <- raw_data_NHPI %>%
+  filter(REF_DATE >="1999-12-01" & REF_DATE <="2009-10-01")
+cleaned_data_NHPI_Regina <- cleaned_data_NHPI_Regina %>%
+  filter(GEO == "Regina, Saskatchewan")
+cleaned_data_NHPI_Regina <- cleaned_data_NHPI_Regina %>%
+  filter(New.housing.price.indexes == "Total (house and land)")
+cleaned_data_NHPI_Regina <- cleaned_data_NHPI_Regina %>%
+  mutate(Increasing_Rate_NHPI = round(((VALUE / 57.2 - 1) * 100),2))
+cleaned_data_NHPI_Regina <- cleaned_data_NHPI_Regina %>%
+  select(-c(GEO,New.housing.price.indexes))
+fig_data<-cleaned_data_NHPI_Regina
+fig_data$REF_DATE <- as.Date(paste(fig_data$REF_DATE, "-01", sep = ""), format = "%Y-%m-%d")
+# Create the line plot
+ggplot(fig_data, aes(x = REF_DATE, y = VALUE)) +
+  geom_line() +
+  labs(x = "Date", y = "NHPI")
+```
+
+Studying how housing prices vary across different regions in Canada can offer valuable insights into local housing market dynamics and their impact on household spending habits. Analyzing historical housing price data across provinces and cities allows us to pinpoint areas with significant fluctuations in the National House Price Index (NHPI) over time. For instance, examining NHPI changes in Toronto, Vancouver, and Regina reveals distinct trends.
+@fig-NHPI-toronto-plot shows the NHPI changes in Toronto. 
+@fig-NHPI-Vancouver-plot shows the NHPI changes in Vancouver.
+@fig-NHPI-Regina-plot shows the NHPI changes in Regina.
+Comparing these trends, we observe that major cities with dense populations tend to experience more pronounced fluctuations in NHPI, while smaller towns with fewer inhabitants tend to have steadier curves. This variance may stem from the concentration of urban populations. Unfortunately, the Canadian government dataset lacks consumption data for provinces and cities. However, by leveraging the Vancouver we've developed and incorporating NHPI data from different regions, we can estimate consumption levels across various areas.
+
+```{r}
+#| label: fig-Cost-Toronto-plot
+#| fig-cap: Predict Consumption of Toronto Over Time
+#| warning: false
+#| message: false
+#| echo: false
+# Step 2: Predict consumption using the polynomial regression model
+linear_model <- lm(Increasing_Rate_Cost ~ Increasing_Rate_NHPI, data = analysis_data)
+predicted_consumption <- predict(linear_model, newdata = cleaned_data_NHPI_Ontario)
+# Create a dataframe for plotting
+plot_data <- data.frame(Date = cleaned_data_NHPI_Ontario$REF_DATE, Predicted_Consumption = predicted_consumption)
+fig_data <- plot_data
+# Step 3: Create a linear plot using ggplot2
+fig_data$Date <- as.Date(paste(fig_data$Date, "-01", sep = ""), format = "%Y-%m-%d")
+ggplot(fig_data, aes(x = Date, y = Predicted_Consumption)) +
+  geom_line() +
+  labs(x = "Date", y = "Consumption")
+
+```
+```{r}
+#| label: fig-Cost-Vancouver-plot
+#| fig-cap: Predict Consumption of Vancouver Over Time
+#| warning: false
+#| message: false
+#| echo: false
+# Step 2: Predict consumption using the polynomial regression model
+linear_model <- lm(Increasing_Rate_Cost ~ Increasing_Rate_NHPI, data = analysis_data)
+predicted_consumption <- predict(linear_model, newdata = cleaned_data_NHPI_Vancouver)
+# Create a dataframe for plotting
+plot_data <- data.frame(Date = cleaned_data_NHPI_Vancouver$REF_DATE, Predicted_Consumption = predicted_consumption)
+fig_data <- plot_data
+# Step 3: Create a linear plot using ggplot2
+fig_data$Date <- as.Date(paste(fig_data$Date, "-01", sep = ""), format = "%Y-%m-%d")
+ggplot(fig_data, aes(x = Date, y = Predicted_Consumption)) +
+  geom_line() +
+  labs(x = "Date", y = "Consumption")
+
+```
+
+```{r}
+#| label: fig-Cost-Regina-plot
+#| fig-cap: Predict Consumption of Regina Over Time
+#| warning: false
+#| message: false
+#| echo: false
+# Step 2: Predict consumption using the polynomial regression model
+linear_model <- lm(Increasing_Rate_Cost ~ Increasing_Rate_NHPI, data = analysis_data)
+predicted_consumption <- predict(linear_model, newdata = cleaned_data_NHPI_Regina)
+# Create a dataframe for plotting
+plot_data <- data.frame(Date = cleaned_data_NHPI_Regina$REF_DATE, Predicted_Consumption = predicted_consumption)
+fig_data <- plot_data
+# Step 3: Create a linear plot using ggplot2
+fig_data$Date <- as.Date(paste(fig_data$Date, "-01", sep = ""), format = "%Y-%m-%d")
+ggplot(fig_data, aes(x = Date, y = Predicted_Consumption)) +
+  geom_line() +
+  labs(x = "Date", y = "Consumption")
+
+```
+@fig-Cost-toronto-plot shows the Predict Consumption changes in Toronto. 
+@fig-Cost-Vancouver-plot x shows the Predict Consumption changes in Vancouver.
+@fig-Cost-Regina-plot x shows the Predict Consumption changes in Regina.
+
+## The Long-term Outlook
+
+Assessing the long-term outlook for the Canadian housing market and household consumer consumption requires consideration of a range of key drivers and potential challenges that could influence future trends. Housing supply and demand dynamics include housing construction rates, land supply, zoning regulations, and housing affordability, which interact with demand-side factors to determine housing market equilibrium. Imbalances in housing supply and demand can lead to price volatility, affordability challenges and potential housing market corrections. Government policies and regulatory measures, such as housing subsidies, tax incentives, mortgage rules and land use regulations, can influence housing market dynamics and consumer consumption. Changes in government policy may introduce new incentives or restrictions that impact housing affordability and household finances. Developments in financial markets, including mortgage conditions, credit availability and mortgage rates, can affect housing market activity and consumer borrowing behavior. Changes in lending standards, interest rate policies and mortgage market liquidity may affect housing affordability and household debt levels. In the long term, technological advances and innovations in home construction, real estate transactions, and consumer finance can reshape housing markets and consumer consumption patterns. Digital platforms, fintech solutions and sustainable housing technologies may influence consumer preferences and market dynamics. Assessing the long-term outlook for the Canadian housing market and household consumer consumption requires consideration of the complex interplay of these factors and their potential impact on future trends. By monitoring key drivers and understanding potential challenges, policymakers, industry stakeholders and investors can better anticipate and adapt to changing market conditions and consumer preferences.
 \newpage
 
+## Next steps and weaknesses
+
+This article lays the foundation for a more detailed study of the factors influencing final consumption of Canadian residents. Since there is no regional consumption data, it is impossible to confirm the impact of excessive fluctuations in housing prices on consumption data.
+The next step would involve utilizing the model we've constructed to predict consumption levels in different regions based on NHPI data. This would entail feeding NHPI data from various regions into the model and generating predictions for consumption amounts in those regions. By doing so, we can gain insights into how housing price changes influence household spending patterns across Canada.
+
+However, it's essential to acknowledge the weaknesses and limitations of this approach. One potential weakness is the assumption that NHPI changes directly correlate with changes in household spending patterns. While housing prices certainly impact consumer behavior, other factors such as income levels, employment rates, and economic policies also play significant roles.
+
+Additionally, the model's accuracy may be affected by the quality and reliability of the NHPI data, as well as the assumptions and variables incorporated into the model itself. It's crucial to validate the model's predictions against real-world consumption data to assess its effectiveness and identify any potential biases or inaccuracies.
+
+Furthermore, the model may not capture the full complexity of regional differences in housing markets and consumer behavior. Factors such as cultural preferences, demographic trends, and local economic conditions could influence consumption patterns in ways that aren't fully accounted for in the model.
+
+Overall, while using NHPI data to predict consumption levels is a promising approach, it's important to interpret the results with caution and consider the broader context and potential limitations of the model.
 ## References
 ---
 nocite: '@*'

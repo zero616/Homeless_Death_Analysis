@@ -1,203 +1,41 @@
-Year.of.death,Cause_of_death,Age_group,Gender,Count
-2017,Accident,40-59,Male,2
-2017,Accident,60+,Male,3
-2017,Cancer,60+,Female,1
-2017,Cancer,40-59,Female,2
-2017,Cancer,40-59,Male,2
-2017,Cancer,60+,Male,4
-2017,Cardiovascular Disease,60+,Female,2
-2017,Cardiovascular Disease,Unknown,Male,1
-2017,Cardiovascular Disease,20-39,Male,2
-2017,Cardiovascular Disease,40-59,Male,4
-2017,Cardiovascular Disease,60+,Male,5
-2017,Drug Toxicity,40-59,Female,2
-2017,Drug Toxicity,20-39,Female,3
-2017,Drug Toxicity,Unknown,Male,1
-2017,Drug Toxicity,60+,Male,3
-2017,Drug Toxicity,20-39,Male,10
-2017,Drug Toxicity,40-59,Male,13
-2017,Homicide,40-59,Male,1
-2017,Other,20-39,Female,1
-2017,Other,60+,Female,1
-2017,Other,40-59,Female,2
-2017,Other,20-39,Male,2
-2017,Other,40-59,Male,2
-2017,Pneumonia,40-59,Male,3
-2017,Suicide,20-39,Female,1
-2017,Suicide,40-59,Female,2
-2018,Accident,Unknown,Male,1
-2018,Accident,40-59,Male,2
-2018,Accident,60+,Male,2
-2018,Cancer,40-59,Male,1
-2018,Cardiovascular Disease,60+,Female,1
-2018,Cardiovascular Disease,Unknown,Male,1
-2018,Cardiovascular Disease,60+,Male,5
-2018,Cardiovascular Disease,40-59,Male,7
-2018,Drug Toxicity,60+,Female,1
-2018,Drug Toxicity,40-59,Female,2
-2018,Drug Toxicity,20-39,Female,8
-2018,Drug Toxicity,60+,Male,1
-2018,Drug Toxicity,20-39,Male,8
-2018,Drug Toxicity,40-59,Male,13
-2018,Homicide,60+,Male,1
-2018,Homicide,20-39,Male,2
-2018,Homicide,40-59,Male,2
-2018,Other,40-59,Female,3
-2018,Other,40-59,Male,3
-2018,Other,60+,Male,4
-2018,Pneumonia,40-59,Female,1
-2018,Pneumonia,60+,Male,1
-2018,Pneumonia,40-59,Male,2
-2018,Suicide,20-39,Female,1
-2018,Suicide,20-39,Male,1
-2018,Suicide,60+,Male,2
-2019,Accident,20-39,Female,2
-2019,Accident,40-59,Female,3
-2019,Accident,20-39,Male,1
-2019,Accident,60+,Male,1
-2019,Accident,40-59,Male,2
-2019,Cancer,20-39,Female,1
-2019,Cancer,40-59,Female,2
-2019,Cancer,40-59,Male,1
-2019,Cancer,60+,Male,5
-2019,Cardiovascular Disease,20-39,Female,1
-2019,Cardiovascular Disease,40-59,Female,1
-2019,Cardiovascular Disease,60+,Female,1
-2019,Cardiovascular Disease,40-59,Male,3
-2019,Cardiovascular Disease,60+,Male,9
-2019,Drug Toxicity,40-59,Female,4
-2019,Drug Toxicity,20-39,Female,9
-2019,Drug Toxicity,60+,Male,4
-2019,Drug Toxicity,20-39,Male,8
-2019,Drug Toxicity,40-59,Male,14
-2019,Homicide,20-39,Female,1
-2019,Homicide,40-59,Female,1
-2019,Homicide,60+,Male,2
-2019,Homicide,40-59,Male,3
-2019,Other,20-39,Female,1
-2019,Other,60+,Female,1
-2019,Other,<20,Female,1
-2019,Other,40-59,Female,2
-2019,Other,20-39,Male,1
-2019,Other,60+,Male,2
-2019,Other,40-59,Male,3
-2019,Pneumonia,40-59,Female,1
-2019,Pneumonia,60+,Female,1
-2019,Pneumonia,40-59,Male,3
-2019,Pneumonia,60+,Male,3
-2019,Suicide,20-39,Male,1
-2019,Suicide,40-59,Male,1
-2020,Accident,20-39,Male,1
-2020,COVID-19,40-59,Female,1
-2020,COVID-19,40-59,Male,1
-2020,COVID-19,60+,Male,1
-2020,COVID-19,Unknown,Male,1
-2020,Cancer,40-59,Female,1
-2020,Cancer,60+,Male,1
-2020,Cancer,Unknown,Male,1
-2020,Cardiovascular Disease,60+,Female,1
-2020,Cardiovascular Disease,40-59,Male,3
-2020,Cardiovascular Disease,60+,Male,10
-2020,Drug Toxicity,60+,Female,2
-2020,Drug Toxicity,20-39,Female,5
-2020,Drug Toxicity,40-59,Female,10
-2020,Drug Toxicity,<20,Male,1
-2020,Drug Toxicity,Unknown,Male,1
-2020,Drug Toxicity,60+,Male,9
-2020,Drug Toxicity,20-39,Male,21
-2020,Drug Toxicity,40-59,Male,26
-2020,Homicide,40-59,Female,1
-2020,Homicide,40-59,Male,1
-2020,Homicide,20-39,Male,2
-2020,Other,Unknown,Female,1
-2020,Other,40-59,Female,2
-2020,Other,20-39,Male,1
-2020,Other,40-59,Male,2
-2020,Other,60+,Male,3
-2020,Pneumonia,60+,Male,2
-2020,Suicide,40-59,Male,1
-2020,Suicide,20-39,Male,3
-2021,Accident,20-39,Female,1
-2021,Accident,<20,Female,1
-2021,Accident,40-59,Female,3
-2021,Accident,40-59,Male,1
-2021,Accident,60+,Male,1
-2021,Accident,20-39,Male,2
-2021,COVID-19,60+,Female,1
-2021,COVID-19,60+,Male,2
-2021,Cancer,60+,Female,1
-2021,Cancer,40-59,Female,2
-2021,Cancer,40-59,Male,1
-2021,Cancer,60+,Male,3
-2021,Cardiovascular Disease,60+,Female,1
-2021,Cardiovascular Disease,40-59,Male,4
-2021,Cardiovascular Disease,60+,Male,10
-2021,Drug Toxicity,60+,Female,1
-2021,Drug Toxicity,<20,Female,1
-2021,Drug Toxicity,40-59,Female,9
-2021,Drug Toxicity,20-39,Female,16
-2021,Drug Toxicity,<20,Male,1
-2021,Drug Toxicity,Unknown,Male,1
-2021,Drug Toxicity,60+,Male,6
-2021,Drug Toxicity,20-39,Male,39
-2021,Drug Toxicity,40-59,Male,51
-2021,Drug Toxicity,20-39,Unknown,1
-2021,Drug Toxicity,40-59,Unknown,1
-2021,Homicide,40-59,Male,1
-2021,Other,40-59,Female,2
-2021,Other,60+,Male,4
-2021,Other,40-59,Male,6
-2021,Pneumonia,20-39,Male,1
-2021,Pneumonia,60+,Male,1
-2021,Suicide,40-59,Female,1
-2021,Suicide,20-39,Female,2
-2021,Suicide,20-39,Male,2
-2021,Suicide,40-59,Male,2
-2022,Accident,20-39,Female,1
-2022,Accident,20-39,Male,2
-2022,Accident,40-59,Male,3
-2022,COVID-19,40-59,Male,1
-2022,Cancer,60+,Female,2
-2022,Cancer,40-59,Male,1
-2022,Cancer,Unknown,Male,2
-2022,Cancer,60+,Male,5
-2022,Cardiovascular Disease,40-59,Female,1
-2022,Cardiovascular Disease,60+,Female,2
-2022,Cardiovascular Disease,20-39,Male,1
-2022,Cardiovascular Disease,Unknown,Male,1
-2022,Cardiovascular Disease,40-59,Male,5
-2022,Cardiovascular Disease,60+,Male,12
-2022,Drug Toxicity,<20,Female,1
-2022,Drug Toxicity,60+,Female,2
-2022,Drug Toxicity,40-59,Female,4
-2022,Drug Toxicity,20-39,Female,15
-2022,Drug Toxicity,<20,Male,1
-2022,Drug Toxicity,60+,Male,10
-2022,Drug Toxicity,20-39,Male,24
-2022,Drug Toxicity,40-59,Male,33
-2022,Homicide,40-59,Male,1
-2022,Other,40-59,Female,1
-2022,Other,60+,Female,1
-2022,Other,40-59,Male,2
-2022,Pneumonia,40-59,Male,1
-2022,Suicide,20-39,Female,1
-2022,Suicide,<20,Female,1
-2022,Suicide,20-39,Male,1
-2022,Suicide,40-59,Male,2
-2022,Suicide,60+,Male,2
-2023,Accident,20-39,Male,1
-2023,Accident,40-59,Male,1
-2023,Cancer,40-59,Male,1
-2023,Cancer,Unknown,Male,1
-2023,Cancer,60+,Male,2
-2023,Cardiovascular Disease,40-59,Male,1
-2023,Drug Toxicity,40-59,Female,3
-2023,Drug Toxicity,60+,Male,4
-2023,Drug Toxicity,20-39,Male,13
-2023,Drug Toxicity,40-59,Male,16
-2023,Homicide,40-59,Male,1
-2023,Other,20-39,Female,1
-2023,Other,40-59,Male,1
-2023,Pneumonia,60+,Male,1
-2023,Suicide,20-39,Male,1
-2023,Suicide,40-59,Male,1
+REF_DATE,Consumption,Increasing_Rate_Cost,NHPI,Increasing_Rate_NHPI
+2000-01,181096,0,57.2,0
+2000-04,182693,0.88,57.6,0.7
+2000-07,185049,2.18,57.9,1.22
+2000-10,185287,2.31,58.3,1.92
+2001-01,186897,3.2,58.7,2.62
+2001-04,187365,3.46,59.2,3.5
+2001-07,187822,3.71,59.6,4.2
+2001-10,190349,5.11,59.9,4.72
+2002-01,193199,6.68,60.4,5.59
+2002-04,195539,7.98,61.4,7.34
+2002-07,195925,8.19,62,8.39
+2002-10,197897,9.28,62.7,9.62
+2003-01,198961,9.86,63.4,10.84
+2003-04,200716,10.83,64.1,12.06
+2003-07,202664,11.91,64.9,13.46
+2003-10,203086,12.14,65.8,15.03
+2004-01,205847,13.67,66.7,16.61
+2004-04,206934,14.27,67.7,18.36
+2004-07,208874,15.34,68.8,20.28
+2004-10,210589,16.29,69.5,21.5
+2005-01,213703,18.01,70.1,22.55
+2005-04,215617,19.06,71,24.13
+2005-07,217159,19.91,72,25.87
+2005-10,219358,21.13,73.2,27.97
+2006-01,222698,22.97,74.7,30.59
+2006-04,224778,24.12,76.9,34.44
+2006-07,227392,25.56,79.8,39.51
+2006-10,229865,26.93,81.6,42.66
+2007-01,232329,28.29,82.3,43.88
+2007-04,235817,30.22,83.7,46.33
+2007-07,238032,31.44,85.9,50.17
+2007-10,242441,33.87,86.6,51.4
+2008-01,244399,34.96,87.6,53.15
+2008-04,244683,35.11,88.1,54.02
+2008-07,244845,35.2,88.2,54.2
+2008-10,241779,33.51,87.9,53.67
+2009-01,240942,33.05,87,52.1
+2009-04,243231,34.31,85.5,49.48
+2009-07,246004,35.84,85.4,49.3
+2009-10,247753,36.81,86.1,50.52
